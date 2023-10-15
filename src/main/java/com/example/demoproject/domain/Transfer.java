@@ -3,8 +3,6 @@ package com.example.demoproject.domain;
 import jakarta.persistence.*;
 import lombok.*;
 
-import static com.example.demoproject.security.Cryptography.sha256;
-
 @Table(name = "user_transfer")
 @Entity(name = "transfer")
 @Getter
@@ -27,8 +25,8 @@ public class Transfer {
     private double transferValue;
 
     public Transfer(RequestTransfer data) throws Exception {
-        this.userDocument = sha256(data.userDocument());
-        this.creditCardToken = sha256(data.creditCardToken());
+        this.userDocument = data.userDocument();
+        this.creditCardToken = data.creditCardToken();
         this.transferValue = data.transferValue();
     }
 
