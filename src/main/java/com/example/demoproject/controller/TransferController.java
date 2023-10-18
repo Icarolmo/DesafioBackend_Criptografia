@@ -50,13 +50,19 @@ public class TransferController {
         return ResponseEntity.ok(filteredTransfer);
     }
 
+    @Transactional
     @PostMapping("/create")
     public ResponseEntity newTransfer(@RequestBody @Valid RequestTransfer data) throws Exception {
-        Transfer newTransfer = new Transfer(data);
-        newTransfer.setUserDocument(passwordEncoder.encode(newTransfer.getUserDocument()));
-        newTransfer.setCreditCardToken(passwordEncoder.encode(newTransfer.getCreditCardToken()));
+
+        String encryptedUserDocument = passwordEncoder.encode(data.userDocument());
+        String encryptedCreditCardToken = passwordEncoder.encode(data.creditCardToken());
+
+        Transfer newTransfer = new Transfer(encryptedUserDocument, encryptedCreditCardToken, data.transferValue());
+
         Transfer responseTransfer = repository.save(newTransfer);
-        newTransfer.setId(responseTransfer.getId());
+
+        responseTransfer.setUserDocument(data.userDocument());
+        responseTransfer.setCreditCardToken(data.creditCardToken());
 
         URI uri = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -64,7 +70,7 @@ public class TransferController {
                 .buildAndExpand(responseTransfer.getId())
                 .toUri();
 
-        return ResponseEntity.created(uri).body(newTransfer);
+        return ResponseEntity.created(uri).body(responseTransfer);
     }
 
     @Transactional
@@ -86,6 +92,7 @@ public class TransferController {
         return ResponseEntity.created(uri).body(transferAlter);
     }
 
+    @Transactional
     @DeleteMapping("/delete")
     public ResponseEntity deleteTransfer(@RequestParam(name = "id") String id){
         var transferDeleted = repository.findById(id);
