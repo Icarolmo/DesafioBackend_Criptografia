@@ -50,7 +50,6 @@ public class TransferController {
         return ResponseEntity.ok(filteredTransfer);
     }
 
-    @Transactional
     @PostMapping("/create")
     public ResponseEntity newTransfer(@RequestBody @Valid RequestTransfer data) throws Exception {
 
