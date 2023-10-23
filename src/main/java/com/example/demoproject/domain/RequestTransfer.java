@@ -1,4 +1,12 @@
 package com.example.demoproject.domain;
 
-public record RequestTransfer(String userDocument, String creditCardToken, double transferValue){
+import jakarta.validation.constraints.NotNull;
+
+public record RequestTransfer(
+        @NotNull
+        String userDocument,
+        @NotNull
+        String creditCardToken,
+        @NotNull
+        double transferValue){
 }
